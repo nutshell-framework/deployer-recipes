@@ -1,0 +1,26 @@
+{
+  "name": "nutshell-framework/deployer-recipes",
+  "description": "The Deployer recipes used at Erdmann & Freunde",
+  "type": "library",
+  "keywords": [],
+  "homepage": "https://github.com/nutshell-framework/deployer-recipes",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Erdmann & Freunde",
+      "email": "moin@erdmann-freunde.de",
+      "homepage": "https://erdmann-freunde.de"
+    }
+  ],
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "deployer/deployer": "^7.0.0@beta"
+  },
+  "autoload": {
+    "files": [
+      "autoload.php"
+    ]
+  }
+}
