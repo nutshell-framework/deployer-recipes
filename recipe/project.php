@@ -2,7 +2,9 @@
 
 namespace Deployer;
 
-import('recipe/contao.php');
+// Switch when <https://github.com/deployphp/deployer/pull/2851> is represented in a tagged version
+import(__DIR__ . '/contao.php');
+//import('recipe/contao.php');
 import(__DIR__ . '/contao-rsync.php');
 import(__DIR__ . '/database.php');
 import(__DIR__ . '/files.php');
