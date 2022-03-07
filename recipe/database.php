@@ -2,98 +2,57 @@
 
 namespace Deployer;
 
-use Deployer\Host\Localhost;
-use Deployer\Task\Context;
-
 desc('Downloads a database dump from given host and overrides the local database');
 task('database:retrieve', static function () {
-    $src = get('rsync_src');
-    while (is_callable($src)) {
-        $src = $src();
-    }
-    if (!trim($src)) {
-        throw new \RuntimeException('You need to specify a source path.');
-    }
-    $dst = get('rsync_dest');
-    while (is_callable($dst)) {
-        $dst = $dst();
-    }
-    if (!trim($dst)) {
-        throw new \RuntimeException('You need to specify a destination path.');
-    }
-    $host = Context::get()->getHost();
-    if ($host instanceof Localhost) {
-        throw new \RuntimeException('Remote host is localhost.');
-    }
+    $dumpFilename = sprintf('deployer__%s.sql.gz', date('YmdHis'));
 
-    echo 'Preparing backup on remote..';
+    // Create backup
+    cd('{{release_or_current_path}}');
+    run("{{bin/php}} {{bin/console}} contao:backup:create '$dumpFilename'");
+    info('Backup created on remote machine');
 
-    $dumpFilename = 'deployer__' . date('YmdHis') . '.sql.gz';
-    run("cd {{release_path}} && {{bin/php}} {{bin/console}} contao:backup:create '$dumpFilename'");
-    echo ".finished\n";
+    // Download backup
     runLocally('mkdir -p var/backups');
-    echo 'Downloading backup archive..';
-    runLocally("scp '{$host->getConnectionString()}:$dst/var/backups/$dumpFilename' '$src/var/backups'");
+    download("{{release_or_current_path}}/var/backups/$dumpFilename", 'var/backups/', ['progress_bar' => false]);
+    info('Backup archive downloaded');
 
-    echo ".finished\n";
-    echo 'Restoring local database....';
-    runLocally("php vendor/bin/contao-console contao:backup:restore $dumpFilename");
-    echo ".finished\n";
-    echo 'Run migration scripts.......';
+    // Restore backup
+    runLocally("php vendor/bin/contao-console contao:backup:restore '$dumpFilename'");
+    info('Local database restored');
+
+    // Migrate database
     try {
         runLocally('php vendor/bin/contao-console contao:migrate --no-interaction --no-backup');
-        echo ".finished\n";
+        info('Local database migrated');
     } catch (\Exception $e) {
-        echo ".skipped\n";
-    }
-
-    echo "  Restore of local database completed\n";
-}
-);
-
-task('ask_retrieve', static function () {
-    if (!askConfirmation('Local database will be overridden. OK?')) {
-        die("Restore cancelled.\n");
+        warning('Local database migration skipped');
     }
 });
 
-before('database:retrieve', 'ask_retrieve');
-
 desc('Restores the local database on the given host');
 task('database:release', static function () {
-    $src = get('rsync_src');
-    while (is_callable($src)) {
-        $src = $src();
-    }
-    if (!trim($src)) {
-        throw new \RuntimeException('You need to specify a source path.');
-    }
-    $dst = get('rsync_dest');
-    while (is_callable($dst)) {
-        $dst = $dst();
-    }
-    if (!trim($dst)) {
-        throw new \RuntimeException('You need to specify a destination path.');
-    }
-    $host = Context::get()->getHost();
-    if ($host instanceof Localhost) {
-        throw new \RuntimeException('Remote host is localhost.');
-    }
+    $dumpFilename = sprintf('deployer__%s.sql.gz', date('YmdHis'));
 
-    echo 'Preparing local backup.....';
-
-    $dumpFilename = 'deployer__' . date('YmdHis') . '.sql.gz';
+    // Create backup
     runLocally("php vendor/bin/contao-console contao:backup:create '$dumpFilename'");
-    echo ".finished\n";
-    echo 'Uploading backup archive...';
-    runLocally("scp '$src/var/backups/$dumpFilename' '{$host->getConnectionString()}:$dst/var/backups/$dumpFilename");
+    info('Backup created on local machine');
 
-    echo ".finished\n";
-    echo 'Restoring remote database..';
-    run("cd {{release_path}} && {{bin/php}} {{bin/console}} contao:backup:restore $dumpFilename");
-    echo ".finished\n";
+    // Upload backup
+    upload("var/backups/$dumpFilename", "{{release_or_current_path}}/var/backups/", ['progress_bar' => false]);
+    info('Backup archive uploaded');
 
-    echo "  Restore of remote database completed\n";
+    // Restore backup
+    cd('{{release_or_current_path}}');
+    run("{{bin/php}} {{bin/console}} contao:backup:restore '$dumpFilename'");
+    info('Remote database restored');
+
+    // Migrate database
+    try {
+        run('{{bin/php}} {{bin/console}} contao:migrate {{console_options}} --no-backup');
+        info('Remote database migrated');
+    } catch (\Exception $e) {
+        warning('Database migration skipped');
+    }
 });
 
 task('ask_release', static function () {
@@ -102,5 +61,11 @@ task('ask_release', static function () {
     }
 });
 
+task('ask_retrieve', static function () {
+    if (!askConfirmation('Local database will be overridden. OK?')) {
+        die("Restore cancelled.\n");
+    }
+});
+
+before('database:retrieve', 'ask_retrieve');
 before('database:release', 'ask_release');
-after('database:release', 'contao:migrate');
