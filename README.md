@@ -4,6 +4,12 @@ The Deployer recipes used at [Erdmann & Freunde][1].
 
 Intended to work with Contao version 4.13+ and Deployer 7. An opinionated extension of the [default Contao recipe][2].
 
+## Install
+
+```bash
+composer require --dev 'nutshell-framework/deployer-recipes:^1.0'
+```
+
 ## Usage
 
 [Install Deployer][3] globally or per project.
