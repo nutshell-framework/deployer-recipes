@@ -52,6 +52,16 @@ task('yarn:build', function () {
 before('deploy', 'yarn:build');
 ```
 
+When _not_ using `public` as the web directory, please set it respectively:
+
+```json
+{
+  "extra": {
+    "public-dir": "web"
+  }
+}
+```
+
 ### Deploy
 
 - `dep deploy [host]`
