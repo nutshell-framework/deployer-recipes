@@ -16,7 +16,7 @@
     "php": ">=7.4"
   },
   "require-dev": {
-    "deployer/deployer": "^7.0.0@beta"
+    "deployer/deployer": "^7.0.0-rc.5@beta"
   },
   "autoload": {
     "files": [
