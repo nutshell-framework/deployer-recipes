@@ -66,6 +66,15 @@ When _not_ using `public` as the web directory, please set it respectively:
 
 - `dep deploy [host]`
 
+### Custom _.htaccess_ file per host
+
+Create a _.htaccess_ file in your project, e.g., `.htaccess_prod`, then configure it for the host:
+
+```php
+host('www.example.org')
+    ->set('htaccess_filename', '.htaccess_prod')
+```
+
 ### Files sync
 
 - `dep files:retrieve [host]` syncs the remote _/files_ folder with the local _/files_ folder
