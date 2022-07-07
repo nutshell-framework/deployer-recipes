@@ -5,7 +5,7 @@ namespace Deployer;
 // Retrieve files from remote (rsync)
 desc('Downloads the files from remote.');
 task('files:retrieve', static function () {
-    download("{{release_or_current_path}}/files", 'files/');
+    download("{{release_or_current_path}}/files/", 'files/');
     info('Download of files/ directory completed');
 });
 
