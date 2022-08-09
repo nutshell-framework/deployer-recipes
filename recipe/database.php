@@ -8,7 +8,7 @@ task('database:retrieve', static function () {
 
     // Create backup
     cd('{{release_or_current_path}}');
-    run("{{bin/php}} {{bin/console}} contao:backup:create '$dumpFilename'");
+    run("{{bin/console}} contao:backup:create '$dumpFilename'");
     info('Backup created on remote machine');
 
     // Download backup
@@ -43,12 +43,12 @@ task('database:release', static function () {
 
     // Restore backup
     cd('{{release_or_current_path}}');
-    run("{{bin/php}} {{bin/console}} contao:backup:restore '$dumpFilename'");
+    run("{{bin/console}} contao:backup:restore '$dumpFilename'");
     info('Remote database restored');
 
     // Migrate database
     try {
-        run('{{bin/php}} {{bin/console}} contao:migrate {{console_options}} --no-backup');
+        run('{{bin/console}} contao:migrate {{console_options}} --no-backup');
         info('Remote database migrated');
     } catch (\Exception $e) {
         warning('Database migration skipped');
