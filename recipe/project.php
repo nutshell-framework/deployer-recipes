@@ -21,7 +21,6 @@ add('exclude', [
 ]);
 
 after('deploy:vendors', 'deploy:htaccess');
-before('deploy:publish', 'contao:install:lock');
 before('deploy:publish', 'contao:manager:download');
 after('contao:manager:download', 'contao:manager:lock');
 
