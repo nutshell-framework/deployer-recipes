@@ -50,6 +50,8 @@ task('yarn:build', function () {
 });
 
 before('deploy', 'yarn:build');
+
+after('contao:manager:download', 'contao:manager:lock');
 ```
 
 When _not_ using `public` as the web directory, please set it respectively:
