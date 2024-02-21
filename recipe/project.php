@@ -22,6 +22,5 @@ add('exclude', [
 
 after('deploy:vendors', 'deploy:htaccess');
 before('deploy:publish', 'contao:manager:download');
-after('contao:manager:download', 'contao:manager:lock');
 
 after('deploy:failed', 'deploy:unlock');
