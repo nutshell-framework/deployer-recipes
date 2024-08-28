@@ -28,7 +28,8 @@ import('contrib/cachetool.php');
 
 set('rsync_src', __DIR__);
 
-host('www.example.org')
+host('DEV')
+    ->setHostname('www.example.org')
     ->set('remote_user', 'acme')
     ->set('http_user', 'acme')
     ->set('deploy_path', '/home/www/{{hostname}}')
