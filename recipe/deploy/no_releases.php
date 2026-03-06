@@ -52,3 +52,9 @@ task('deploy:cleanup', static function () {
 task('rollback', static function () {
     // Rollback through previous releases is not possible without releases.
 });
+
+task('contao:manager:lock', static function () {
+    cd('{{release_or_current_path}}');
+    run('mkdir -p contao-manager');
+    run('echo "99" > contao-manager/login.lock');
+});
