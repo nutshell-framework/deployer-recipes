@@ -25,6 +25,14 @@ set('release_path', static function () {
     return get('deploy_path');
 });
 
+set('current_path', static function () {
+    return get('deploy_path');
+});
+
+set('release_or_current_path', static function () {
+    return get('deploy_path');
+});
+
 task('deploy:release', static function () {
     // No release folder is created.
 })->hidden();
