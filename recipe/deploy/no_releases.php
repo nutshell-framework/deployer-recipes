@@ -7,7 +7,7 @@ namespace Deployer;
 use function Deployer\Support\str_contains;
 
 desc('Preparing host for deploy without releases');
-task('deploy:prepare', function () {
+task('deploy:setup', function () {
     // Check if shell is POSIX-compliant
     $result = run('echo $0');
 
