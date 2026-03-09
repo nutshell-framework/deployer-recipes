@@ -69,6 +69,16 @@ When _not_ using `public` as the web directory, please set it respectively:
 
 - `dep deploy [host]`
 
+### Deploy without releases
+
+If your target host should not use Deployer's `releases/` structure, import the no-releases recipe in your `deploy.php`:
+
+```php
+import(__DIR__.'/vendor/nutshell-framework/deployer-recipes/recipe/deploy/no_releases.php');
+```
+
+This deploys directly into `deploy_path`. Keep in mind that release-based rollbacks are not available in this mode.
+
 ### Custom _.htaccess_ file per host
 
 Create a _.htaccess_ file in your project, e.g., `.htaccess_prod`, then configure it for the host:
